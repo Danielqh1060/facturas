@@ -1,0 +1,187 @@
+<form
+  *ngIf="modo === 'crear' || modo === 'editar'"
+  #facturaForm="ngForm"
+  (ngSubmit)="modo === 'editar' ? actualizarFactura() : crearFactura()"
+  autocomplete="off"
+>
+  <h3 class="mb-4">
+    {{ modo === 'editar' ? 'Editar Factura' : 'Registrar Nueva Factura' }}
+  </h3>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Código de Factura *</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="factura.Factura_Id"
+        name="Factura_Id"
+        [readonly]="modo === 'editar'"
+        required
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Cliente *</label>
+      <select
+        class="form-select"
+        [(ngModel)]="factura.Cliente_Id"
+        name="Cliente_Id"
+        required
+      >
+        <option value="">Seleccionar cliente</option>
+        <option *ngFor="let cliente of clientes" [value]="cliente.id">
+          {{ cliente.nombre }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Fecha de Emisión *</label>
+      <input
+        type="date"
+        class="form-control"
+        [(ngModel)]="factura.Fecha_Emision"
+        name="Fecha_Emision"
+        required
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Fecha de Vencimiento *</label>
+      <input
+        type="date"
+        class="form-control"
+        [(ngModel)]="factura.Fecha_Vencimiento"
+        name="Fecha_Vencimiento"
+        required
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Moneda</label>
+      <select
+        class="form-select"
+        [(ngModel)]="factura.Moneda"
+        name="Moneda"
+        required
+      >
+        <option value="">Seleccionar moneda</option>
+        <option value="1">COP - Peso Colombiano</option>
+        <option value="2">USD - Dólar</option>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Valor de Factura *</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="factura.Valor_Factura"
+        name="Valor_Factura"
+        required
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Tasa de Cambio Emisión</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="factura.Tasa_Cambio_Emision"
+        name="Tasa_Cambio_Emision"
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Valor Pagado</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="factura.Valor_Pagado"
+        name="Valor_Pagado"
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Fecha de Pago</label>
+      <input
+        type="date"
+        class="form-control"
+        [(ngModel)]="factura.Fecha_Pago"
+        name="Fecha_Pago"
+      />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Tasa de Cambio Pago</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="factura.Tasa_Cambio_Pago"
+        name="Tasa_Cambio_Pago"
+      />
+    </div>
+  </div>
+  <div class="d-flex justify-content-between mt-4">
+    <button
+      type="submit"
+      class="btn"
+      [ngClass]="'btn-primary'"
+      style="background-color: #006194; border-color: #006194;"
+      [disabled]="!facturaForm.form.valid"
+    >
+      {{ modo === 'editar' ? 'Actualizar Factura' : 'Guardar Factura' }}
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="cancelar()">
+      Cancelar
+    </button>
+  </div>
+</form>
+<div *ngIf="modo === 'detalle'">
+  <h3 class="mb-4">Detalle de Factura {{ factura.Factura_Id }}</h3>
+  <div class="row">
+    <div class="col-md-6 mb-2">
+      <strong>Código de Factura:</strong> {{ factura.Factura_Id }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Cliente:</strong> {{ getNombreCliente(factura.Cliente_Id) }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Fecha de Emisión:</strong> {{ factura.Fecha_Emision | date:'d/M/yyyy' }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Fecha de Vencimiento:</strong> {{ factura.Fecha_Vencimiento | date:'d/M/yyyy' }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Moneda:</strong> {{ getNombreMoneda(factura.Moneda) }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Valor de Factura:</strong> {{ factura.Valor_Factura | currency:'COP':'symbol':'1.0-0' }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Tasa de Cambio Emisión:</strong> $ {{ factura.Tasa_Cambio_Emision }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Estado de Facturación:</strong>
+      <span [ngClass]="{
+        'badge bg-success': factura.Estado_facturacion === 'PAGADA',
+        'badge bg-danger': factura.Estado_facturacion === 'ANULADO',
+        'badge bg-info': factura.Estado_facturacion === 'EMITIDA'
+      }">
+        {{ factura.Estado_facturacion }}
+      </span>
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Valor Pagado:</strong> {{ factura.Valor_Pagado | currency:'COP':'symbol':'1.0-0' }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Fecha de Pago:</strong> {{ factura.Fecha_Pago ? (factura.Fecha_Pago | date:'d/M/yyyy') : 'N/A' }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Tasa de Cambio Pago:</strong> $ {{ factura.Tasa_Cambio_Pago }}
+    </div>
+    <div class="col-md-6 mb-2">
+      <strong>Estado:</strong>
+      <span [ngClass]="{
+        'badge bg-success': factura.Estado_Rec === 'A',
+        'badge bg-secondary': factura.Estado_Rec === 'I'
+      }">
+        {{ factura.Estado_Rec === 'A' ? 'Activo' : 'Inactivo' }}
+      </span>
+    </div>
+  </div>
+  <div class="text-end mt-3">
+    <button class="btn btn-outline-secondary" (click)="cancelar()">Cerrar</button>
+  </div>
+</div>

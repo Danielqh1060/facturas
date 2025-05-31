@@ -1,0 +1,108 @@
+<div class="container-fluid mt-4">
+    <!-- Encabezado -->
+    <div class="header-flex mb-3">
+        <h2 class="fw-bold m-0">Gestión de Facturas</h2>
+        <button class="btn" style="background:#006194; color:white;" (click)="abrirCrearFactura()">
+            <i class="bi bi-plus"></i> Crear Nueva Factura
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Código de Factura o Cliente"
+                        [(ngModel)]="filtroTexto" (ngModelChange)="aplicarFiltros()">
+                </div>
+                <select class="form-select" [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
+                    <option value="">Todos los estados</option>
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+                <div class="col-md-4">
+                    <select class="form-select" [(ngModel)]="filtroCliente" (ngModelChange)="aplicarFiltros()">
+                        <option value="">Todos los clientes</option>
+                        <option *ngFor="let cliente of clientes" [value]="cliente.Cliente_Id">
+                            {{ cliente.Nombre_Cliente }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Tabla de facturas -->
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle factura-table w-100">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Fecha emisión</th>
+                    <th>Fecha vencimiento</th>
+                    <th>Moneda</th>
+                    <th>Tasa cambio emisión</th>
+                    <th>Valor factura</th>
+                    <th>Estado Facturación</th>
+                    <th>Valor pagado</th>
+                    <th>Fecha pago</th>
+                    <th>Tasa cambio pago</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let ticket of filteredTickets; let i = index" [ngClass]="{'table-row-alt': i % 2 === 1}">
+                    <td>{{ ticket.Factura_Id }}</td>
+                    <td>{{ ticket.Nombre_Cliente }}</td>
+                    <td>{{ ticket.Fecha_Emision | date:'d/M/yyyy' }}</td>
+                    <td>{{ ticket.Fecha_Vencimiento | date:'d/M/yyyy' }}</td>
+                    <td>{{ ticket.Descripcion_Moneda }}</td>
+                    <td>${{ ticket.Tasa_Cambio_Emision }}</td>
+                    <td>${{ ticket.Valor_Factura | number:'1.0-0' }}</td>
+                    <td>
+                        <span [ngClass]="{
+      'estado-pagada': ticket.Descripcion_Estado_Facturacion === 'PAGADA',
+      'estado-emitida': ticket.Descripcion_Estado_Facturacion === 'EMITIDA',
+      'estado-anulado': ticket.Descripcion_Estado_Facturacion === 'ANULADO'
+    }" class="estado-facturacion">
+                            {{ ticket.Descripcion_Estado_Facturacion }}
+                        </span>
+                    </td>
+                    <td>${{ ticket.Valor_Pagado | number:'1.0-0' }}</td>
+                    <td>
+                        {{ ticket.Fecha_Pago && (ticket.Fecha_Pago | date:'yyyy-MM-ddTHH:mm:ss') !==
+                        '0001-01-01T00:00:00' ? (ticket.Fecha_Pago | date:'d/M/yyyy') : 'N/A' }}
+                    </td>
+                    <td>${{ ticket.Tasa_Cambio_Pago }}</td>
+                    <td>
+                        <span [ngClass]="{
+      'estado-activo': ticket.Estado_Rec === 'A',
+      'estado-inactivo': ticket.Estado_Rec === 'I'
+    }">
+                            {{ ticket.Estado_Rec === 'A' ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-link p-0 me-2" title="Ver" (click)="abrirDetalle(ticket)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-link p-0 me-2" title="Editar" (click)="abrirEditar(ticket)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-link text-danger p-0" title="Eliminar"
+                            *ngIf="ticket.Factura_Id !== undefined" (click)="delete(ticket.Factura_Id)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredTickets.length === 0 && !loading">
+                    <td colspan="13" class="text-center">No hay facturas registradas.</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="loading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+    </div>
+</div>

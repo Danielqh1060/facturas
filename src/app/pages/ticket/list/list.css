@@ -1,0 +1,97 @@
+.factura-table tbody tr.table-row-alt {
+  background: #f8fafc;
+}
+
+.factura-table thead tr {
+  background: #006194;
+  color: #fff;
+}
+
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-responsive {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 0.25em 0.8em;
+  border-radius: 0.7em;
+  font-size: 0.95em;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.estado-facturacion {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.estado-pagada {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.estado-emitida {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.estado-anulado {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.estado-activo {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.estado-inactivo {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.btn-link {
+  color: #006194;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.btn-link.text-danger {
+  color: #d33 !important;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.text-center .spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.card.mb-3 {
+  border-radius: 0.5em;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.form-select, .form-control {
+  border-radius: 0.4em;
+  font-size: 1em;
+}
+
+@media (max-width: 768px) {
+  .factura-table th, .factura-table td {
+    font-size: 0.95em;
+    padding: 0.5em;
+  }
+}
